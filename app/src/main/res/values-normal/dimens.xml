@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="appBar">56dp</dimen>
+    <dimen name="filterBar">64dp</dimen>
+    <dimen name="appBarButtons">48dp</dimen>
+    <dimen name="cardView_height">100dp</dimen>
+    <dimen name="textSize_tabItem">25sp</dimen>
+    <dimen name="textSize_toast">12sp</dimen>
+    <dimen name="billboard_margin">1dp</dimen>
+    <dimen name="peekHeight">92dp</dimen>
+    <dimen name="expandable_height">300dp</dimen>
+    <dimen name="expandable_textSize_rows">16sp</dimen>
+    <dimen name="status_filter_selected_size">32dp</dimen>
+
+</resources>

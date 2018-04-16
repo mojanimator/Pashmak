@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent">
+
+    <ExpandableListView
+        android:id="@+id/expandable_province_counties"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/expandable_height"
+        android:layout_margin="10dp"
+        android:background="@color/colorPrimaryDark"
+        android:childDivider="@color/colorPrimary"
+        android:divider="@color/colorAccent"
+        android:dividerHeight="10dp"
+
+        android:groupIndicator="@drawable/expandable_indicator"
+        android:minHeight="300dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!--<android.support.v7.widget.ButtonBarLayout-->
+    <!--android:id="@+id/buttonBarLayout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+
+    <!--android:layout_marginBottom="32dp"-->
+    <!--android:gravity="center"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent">-->
+
+    <!--<Button-->
+    <!--android:id="@+id/btn_accept_provinceCountieSelect"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="10dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:background="@drawable/buttons_background"-->
+    <!--android:text="تایید"-->
+    <!--android:textColor="@color/colorWhite"-->
+    <!--android:textSize="@dimen/textSize_tabItem"-->
+    <!--android:textStyle="bold"-->
+    <!--tools:text="تایید" />-->
+
+    <!--<Button-->
+    <!--android:id="@+id/btn_cancel_provinceCountieSelect"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="10dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:background="@drawable/buttons_background"-->
+    <!--android:text="لغو"-->
+    <!--android:textColor="@color/colorWhite"-->
+    <!--android:textSize="@dimen/textSize_tabItem"-->
+    <!--android:textStyle="bold"-->
+    <!--tools:text="لغو" />-->
+    <!--</android.support.v7.widget.ButtonBarLayout>-->
+
+
+</android.support.constraint.ConstraintLayout>
