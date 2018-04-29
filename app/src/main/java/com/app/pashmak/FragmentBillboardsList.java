@@ -2,6 +2,7 @@ package com.app.pashmak;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -79,6 +80,10 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
     private FragmentActivity activity;
     private ImageButton ibDeleteSearch;
     private String where = "";
+    private String whereAddress = "";
+    private String whereStatus = "";
+    private String whereProvince = "";
+    private String whereCounty = "";
     public static boolean onRefresh = false;
     private View bsFilterBillboards;
     private BottomSheetBehavior<View> bshBehavior;
@@ -95,6 +100,10 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
     private View statusFilterView;
     private GridView gvStatusSelection;
     private ImageView ivHolderStatusFilter;
+    private ExpandableListView expProvinceCounties;
+    private ProvinceCountyListAdapter expProvinceCountiesAdapter;
+    private Button btnAcceptProvinceCountyFilter;
+    private DialogInterface.OnDismissListener dialogDismissListener;
 
     public FragmentBillboardsList() {
         // Required empty public constructor
@@ -128,22 +137,42 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
 
         LayoutInflater filterInflater = getLayoutInflater();
 
-        provinceCountyView = filterInflater.inflate(R.layout.expandable_province_counties, null);
+        provinceCountyView = filterInflater.inflate(R.layout.expandable_province_counties, (ViewGroup) view, false);
         dialogBuilder = new AlertDialog.Builder(context);
         dialogBuilder.setView(provinceCountyView);
         dialogBuilder.setCancelable(true);
         dialogProvinceCounties = dialogBuilder.create();
-//        dialogProvinceCounties.show();
 
-        statusFilterView = filterInflater.inflate(R.layout.status_filter_layout, null);
+
+        statusFilterView = filterInflater.inflate(R.layout.status_filter_layout, (ViewGroup) view, false);
         dialogBuilder.setView(statusFilterView);
         dialogBuilder.setCancelable(true);
         dialogStatus = dialogBuilder.create();
 
-        ExpandableListView expProvincecounties = provinceCountyView.findViewById(R.id.expandable_province_counties);
-        ProvinceCountyListAdapter expProvinceCountiesAdapter = new ProvinceCountyListAdapter(context);
-        expProvincecounties.setAdapter(expProvinceCountiesAdapter);
-        expProvincecounties.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        dialogDismissListener = new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                search();
+            }
+        };
+        dialogProvinceCounties.setOnDismissListener(dialogDismissListener);
+        dialogStatus.setOnDismissListener(dialogDismissListener);
+
+        statusFilterView.findViewById(R.id.btn_toggle_auction).setOnClickListener(this);
+        statusFilterView.findViewById(R.id.btn_toggle_ready).setOnClickListener(this);
+        statusFilterView.findViewById(R.id.btn_toggle_reserve).setOnClickListener(this);
+        statusFilterView.findViewById(R.id.btn_toggle_service).setOnClickListener(this);
+
+        expProvinceCountiesAdapter = new ProvinceCountyListAdapter(context);
+        expProvinceCounties = provinceCountyView.findViewById(R.id.expandable_province_counties);
+        expProvinceCounties.setAdapter(expProvinceCountiesAdapter);
+        expProvinceCounties.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "onItemClick: " + position);
+            }
+        });
+        expProvinceCounties.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 Utils.mToast(context, groupPosition + "," + childPosition, Toast.LENGTH_SHORT);
@@ -151,6 +180,7 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
                 return false;
             }
         });
+
 
         btnFilterProvinceCounties = activity.findViewById(R.id.btn_filter_provinceCounties);
         btnFilterProvinceCounties.setOnClickListener(this);
@@ -290,11 +320,14 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
 
 
     private void search() {
-        String str = etSearch.getText().toString();
-        if (!str.equals(""))
-            where = "address LIKE '%" + str + "%'";
-        else where = "";
+        where = whereMaker();
         refresh();
+    }
+
+    private String whereMaker() {
+        whereAddress = etSearch.getText().toString();
+        where = "address LIKE '%" + whereAddress + "%'";
+        return where;
     }
 
 
@@ -361,6 +394,22 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
                 break;
             case R.id.cvShowStatusFilters:
                 dialogStatus.show();
+                break;
+
+            case R.id.btn_toggle_auction:
+                Log.d(TAG, "auction ");
+                break;
+            case R.id.btn_toggle_ready:
+                Log.d(TAG, "ready ");
+                break;
+            case R.id.btn_toggle_reserve:
+                Log.d(TAG, "reserve ");
+                break;
+            case R.id.btn_toggle_service:
+                Log.d(TAG, "service ");
+                break;
+            case R.id.expandable_province_counties:
+                Log.d(TAG, "expand ");
                 break;
         }
     }
