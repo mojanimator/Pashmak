@@ -5,9 +5,9 @@
     <dimen name="appBarButtons">48dp</dimen>
     <dimen name="cardView_height">100dp</dimen>
     <dimen name="textSize_tabItem">25sp</dimen>
-    <dimen name="textSize_toast">12sp</dimen>
+    <dimen name="textSize_toast">5sp</dimen>
     <dimen name="billboard_margin">1dp</dimen>
-    <dimen name="peekHeight">92dp</dimen>
+    <dimen name="peekHeight">80dp</dimen>
     <dimen name="expandable_height">300dp</dimen>
     <dimen name="expandable_textSize_rows">16sp</dimen>
     <dimen name="status_filter_selected_size">32dp</dimen>

@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
 
     <ToggleButton
         android:id="@+id/btn_toggle_ready"
 
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/toggle_selector_ready"
         android:checked="true"
         android:text="آماده"
+        android:textColor="@android:color/white"
+        android:textOff="آماده / غیر فعال"
+        android:textOn="آماده / فعال"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btn_toggle_service"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,10 +34,13 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/toggle_selector_service"
         android:checked="true"
         android:text="سرویس"
+        android:textColor="@android:color/white"
+        android:textOff="سرویس / غیر فعال"
+        android:textOn="سرویس / فعال"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btn_toggle_auction"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,10 +54,13 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/toggle_selector_auction"
         android:checked="true"
         android:text="مزایده"
+        android:textColor="@android:color/white"
+        android:textOff="مزایده / غیر فعال"
+        android:textOn="مزایده / فعال"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btn_toggle_reserve"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,14 +71,23 @@
 
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/toggle_selector_using"
         android:checked="true"
         android:text="رزرو"
+        android:textColor="@android:color/white"
+        android:textOff="رزرو / غیر فعال"
+        android:textOn="رزرو / فعال"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_toggle_auction" />
+
+
 </android.support.constraint.ConstraintLayout>
+

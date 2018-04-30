@@ -8,8 +8,7 @@
     android:layout_marginStart="8dp"
     android:layout_marginTop="8dp"
     android:background="@drawable/row_billboard_background"
-    android:clickable="true"
-    android:focusable="true"
+
     android:foreground="?attr/selectableItemBackgroundBorderless"
     android:paddingEnd="20dp"
     android:paddingLeft="20dp"
@@ -22,10 +21,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="false"
         android:focusable="false"
         android:paddingBottom="10dp"
         android:paddingTop="10dp"
+
         android:text="شهر"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"

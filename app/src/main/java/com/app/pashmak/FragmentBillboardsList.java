@@ -39,12 +39,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.app.pashmak.Adapter.BillboardsAdapter;
 import com.app.pashmak.Adapter.ProvinceCountyListAdapter;
 import com.app.pashmak.Adapter.ViewPagerAdapter;
 import com.app.pashmak.Model.Billboard;
+import com.app.pashmak.Model.ProvinceCounties;
 import com.app.pashmak.Utils.NetUtils;
 import com.app.pashmak.Utils.Utils;
 
@@ -104,6 +105,11 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
     private ProvinceCountyListAdapter expProvinceCountiesAdapter;
     private Button btnAcceptProvinceCountyFilter;
     private DialogInterface.OnDismissListener dialogDismissListener;
+    private ProvinceCounties tmpProvince;
+    private ToggleButton btnToggleAuction;
+    private ToggleButton btnToggleReady;
+    private ToggleButton btnToggleReserve;
+    private ToggleButton btnToggleService;
 
     public FragmentBillboardsList() {
         // Required empty public constructor
@@ -158,31 +164,40 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
         dialogProvinceCounties.setOnDismissListener(dialogDismissListener);
         dialogStatus.setOnDismissListener(dialogDismissListener);
 
-        statusFilterView.findViewById(R.id.btn_toggle_auction).setOnClickListener(this);
-        statusFilterView.findViewById(R.id.btn_toggle_ready).setOnClickListener(this);
-        statusFilterView.findViewById(R.id.btn_toggle_reserve).setOnClickListener(this);
-        statusFilterView.findViewById(R.id.btn_toggle_service).setOnClickListener(this);
+        btnToggleAuction = statusFilterView.findViewById(R.id.btn_toggle_auction);
+        btnToggleAuction.setOnClickListener(this);
+        btnToggleReady = statusFilterView.findViewById(R.id.btn_toggle_ready);
+        btnToggleReady.setOnClickListener(this);
+        btnToggleReserve = statusFilterView.findViewById(R.id.btn_toggle_reserve);
+        btnToggleReserve.setOnClickListener(this);
+        btnToggleService = statusFilterView.findViewById(R.id.btn_toggle_service);
+        btnToggleService.setOnClickListener(this);
 
         expProvinceCountiesAdapter = new ProvinceCountyListAdapter(context);
         expProvinceCounties = provinceCountyView.findViewById(R.id.expandable_province_counties);
         expProvinceCounties.setAdapter(expProvinceCountiesAdapter);
-        expProvinceCounties.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "onItemClick: " + position);
-            }
-        });
+
         expProvinceCounties.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Utils.mToast(context, groupPosition + "," + childPosition, Toast.LENGTH_SHORT);
-                Log.d(TAG, "onChildClick: " + groupPosition + "," + childPosition);
+                whereProvince = String.valueOf(groupPosition + 1);
+                whereCounty = String.valueOf(childPosition);
+                tmpProvince = Utils.getProvinceCounties().get(groupPosition);
+                if (childPosition == 0) {
+                    btnFilterProvinceCounties.setText(String.format("%s / همه", tmpProvince.getProvinceName()));
+
+                } else {
+                    btnFilterProvinceCounties.setText(String.format("%s / %s", tmpProvince.getProvinceName(), tmpProvince.getCounties().get(childPosition).getName()));
+                }
+
+                dialogProvinceCounties.dismiss();
                 return false;
             }
         });
 
 
         btnFilterProvinceCounties = activity.findViewById(R.id.btn_filter_provinceCounties);
+        btnFilterProvinceCounties.setText("کرمان / همه");
         btnFilterProvinceCounties.setOnClickListener(this);
 
         cvStatus = activity.findViewById(R.id.cvShowStatusFilters);
@@ -320,14 +335,20 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
 
 
     private void search() {
-        where = whereMaker();
+        whereMaker();
         refresh();
     }
 
-    private String whereMaker() {
+    private void whereMaker() {
         whereAddress = etSearch.getText().toString();
-        where = "address LIKE '%" + whereAddress + "%'";
-        return where;
+        if (!whereAddress.equals(""))
+            where = "address LIKE '%" + whereAddress + "%'";
+        if (!whereProvince.equals(""))
+            where = "`province-id` =" + whereProvince;
+        if (!whereCounty.equals("0"))
+            where = "`county-id` =" + whereCounty;
+
+
     }
 
 
@@ -378,7 +399,7 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
         switch (id) {
             case R.id.iBDeleteSearch:
                 etSearch.setText(null);
-                where = "";
+                whereAddress = "";
                 refresh();
                 break;
             case R.id.button_filterLayout_toggle:
@@ -397,10 +418,10 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
                 break;
 
             case R.id.btn_toggle_auction:
-                Log.d(TAG, "auction ");
+                Log.d(TAG, "auction " + btnToggleAuction.isChecked());
                 break;
             case R.id.btn_toggle_ready:
-                Log.d(TAG, "ready ");
+                Log.d(TAG, "ready " + btnToggleReady.isChecked());
                 break;
             case R.id.btn_toggle_reserve:
                 Log.d(TAG, "reserve ");

@@ -88,7 +88,7 @@ public class NetUtils {
 
                         try {
 
-                            Log.d(TAG, "onResponse  : " + response);
+//                            Log.d(TAG, "onResponse  : " + response);
 
                             JSONArray rsp;
                             JSONObject jsonObject;
@@ -105,6 +105,7 @@ public class NetUtils {
                                     billboard.setId(jsonObject.getLong("id"));
                                     billboard.setLat(jsonObject.getDouble("lat"));
                                     billboard.setLng(jsonObject.getDouble("lng"));
+                                    billboard.setProvince_id(jsonObject.getInt("province-id"));
                                     billboard.setCounty_id(jsonObject.getInt("county-id"));
                                     billboard.setAddress(jsonObject.getString("address"));
                                     billboard.setContractor_id(jsonObject.getLong("contractor-id"));
@@ -132,6 +133,7 @@ public class NetUtils {
                             Log.d(TAG, "JSONException " + e.getMessage());
                             FragmentBillboardsList.endOfBillboards = true;
                             Utils.mToast(mCtx, "نتیجه ای یافت نشد", Toast.LENGTH_SHORT);
+                            billboardsAdapter.notifyDataSetChanged();
                             FragmentBillboardsList.onRefresh = false;
                         }
 

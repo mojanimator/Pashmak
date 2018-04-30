@@ -8,6 +8,7 @@ public class Billboard {
     private long id;
     private double lat;
     private double lng;
+    private int province_id;
     private int county_id;
     private String address;
     private long contractor_id;
@@ -37,6 +38,14 @@ public class Billboard {
 
     public void setLng(double lng) {
         this.lng = lng;
+    }
+
+    public int getProvince_id() {
+        return province_id;
+    }
+
+    public void setProvince_id(int province_id) {
+        this.province_id = province_id;
     }
 
     public int getCounty_id() {
