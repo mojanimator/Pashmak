@@ -67,7 +67,7 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_toggle_service" />
 
     <ToggleButton
-        android:id="@+id/btn_toggle_reserve"
+        android:id="@+id/btn_toggle_using"
 
         android:layout_width="0dp"
         android:layout_height="wrap_content"

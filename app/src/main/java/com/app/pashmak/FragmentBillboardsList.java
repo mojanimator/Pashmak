@@ -108,8 +108,12 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
     private ProvinceCounties tmpProvince;
     private ToggleButton btnToggleAuction;
     private ToggleButton btnToggleReady;
-    private ToggleButton btnToggleReserve;
+    private ToggleButton btnToggleUsing;
     private ToggleButton btnToggleService;
+    private HashMap<String, Boolean> statusHashMap = new HashMap<>();
+    private ArrayList<HashMap<String, String>> arrayListStatus;
+    private int[] StatusDrawablesArray;
+    private SimpleAdapter statusAdapter;
 
     public FragmentBillboardsList() {
         // Required empty public constructor
@@ -155,21 +159,27 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
         dialogBuilder.setCancelable(true);
         dialogStatus = dialogBuilder.create();
 
-        dialogDismissListener = new DialogInterface.OnDismissListener() {
+        dialogProvinceCounties.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 search();
             }
-        };
-        dialogProvinceCounties.setOnDismissListener(dialogDismissListener);
-        dialogStatus.setOnDismissListener(dialogDismissListener);
+        });
+        dialogStatus.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                updateStatusView();
+
+                search();
+            }
+        });
 
         btnToggleAuction = statusFilterView.findViewById(R.id.btn_toggle_auction);
         btnToggleAuction.setOnClickListener(this);
         btnToggleReady = statusFilterView.findViewById(R.id.btn_toggle_ready);
         btnToggleReady.setOnClickListener(this);
-        btnToggleReserve = statusFilterView.findViewById(R.id.btn_toggle_reserve);
-        btnToggleReserve.setOnClickListener(this);
+        btnToggleUsing = statusFilterView.findViewById(R.id.btn_toggle_using);
+        btnToggleUsing.setOnClickListener(this);
         btnToggleService = statusFilterView.findViewById(R.id.btn_toggle_service);
         btnToggleService.setOnClickListener(this);
 
@@ -180,9 +190,12 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
         expProvinceCounties.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                whereProvince = String.valueOf(groupPosition + 1);
-                whereCounty = String.valueOf(childPosition);
                 tmpProvince = Utils.getProvinceCounties().get(groupPosition);
+                whereProvince = String.valueOf(groupPosition + 1);
+                if (childPosition != 0)
+                    whereCounty = String.valueOf(tmpProvince.getCounties().get(childPosition).getId());
+                else whereCounty = "0";
+
                 if (childPosition == 0) {
                     btnFilterProvinceCounties.setText(String.format("%s / همه", tmpProvince.getProvinceName()));
 
@@ -200,6 +213,7 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
         btnFilterProvinceCounties.setText("کرمان / همه");
         btnFilterProvinceCounties.setOnClickListener(this);
 
+
         cvStatus = activity.findViewById(R.id.cvShowStatusFilters);
         cvStatus.setOnClickListener(this);
         cvStatus.setOnInterceptTouchEventListener(new MyCardview.OnInterceptTouchEventListener() {
@@ -215,32 +229,57 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
             }
         });
 
-        ImageView iv = new ImageView(context);
-        iv.setImageResource(R.drawable.status_auction_background);
 
-//        ivHolderStatusFilter = new android.support.v7.widget.AppCompatImageView(context) {
-//            @Override
-//            public boolean onTouchEvent(MotionEvent event) {
-//                return false;
-//            }
-//        };
-
-        ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
-        int[] StatusDrawablesArray = Utils.getStatusDrawablesArray();
+        arrayListStatus = new ArrayList<>();
+        StatusDrawablesArray = Utils.getStatusDrawablesArray();
         for (int statusDrawable : StatusDrawablesArray) {
             HashMap<String, String> hashMap = new HashMap<>();//create a hashmap to store the data in key value pair
             hashMap.put("image", statusDrawable + "");
-            arrayList.add(hashMap);//add the hashmap into arrayList
+            arrayListStatus.add(hashMap);//add the hashmap into arrayList
         }
         String[] from = {"image"};//string array
         int[] to = {R.id.iv_selected_status};//int array of views id's
-        SimpleAdapter statusAdapter = new SimpleAdapter(context, arrayList, R.layout.selected_status_filter_row, from, to);
+        statusAdapter = new SimpleAdapter(context, arrayListStatus, R.layout.selected_status_filter_row, from, to);
 
         gvStatusSelection = activity.findViewById(R.id.gv_status);
         gvStatusSelection.setAdapter(statusAdapter);
 
 
-        init();
+        ibDeleteSearch.setOnClickListener(this);
+        refreshBillboards.setColorSchemeResources(
+                R.color.colorAccent,
+                R.color.colorAccent,
+                R.color.colorPrimaryDark);
+        manager = new GridLayoutManager(context, getColumnFromDeviceSize());
+
+        billboards = new ArrayList<Billboard>();
+
+        billboardsAdapter = new BillboardsAdapter(billboards, context);
+
+        rvBillboards.setLayoutManager(manager);
+        rvBillboards.setAdapter(billboardsAdapter);
+
+        netUtils = new NetUtils(view, billboardsAdapter);
+        netUtils.setCommunicator((NetUtils.Communicator) activity);
+        etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
+
+                if (actionId == EditorInfo.IME_ACTION_SEARCH
+//                        || actionId == EditorInfo.IME_ACTION_DONE
+//                        || actionId == EditorInfo.IME_ACTION_GO
+//                        || actionId == EditorInfo.IME_ACTION_NEXT
+//                        || (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN)
+//                        || (keyEvent != null && keyEvent.getAction() == KeyEvent.KEYCODE_ENTER)
+
+                        ) {
+
+                    search();
+                }
+
+                return false;
+            }
+        });
 
 //        getMoreData(where);
 
@@ -279,46 +318,51 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
             }
         });
 
+        whereProvince = "21"; //default is kerman
+        whereCounty = "0";
+        updateStatusView();
+
         return view;
     }
 
-    private void init() {
 
-        ibDeleteSearch.setOnClickListener(this);
-        refreshBillboards.setColorSchemeResources(
-                R.color.colorAccent,
-                R.color.colorAccent,
-                R.color.colorPrimaryDark);
-        manager = new GridLayoutManager(context, getColumnFromDeviceSize());
+    private void updateStatusView() {
+        statusHashMap.clear();
+        arrayListStatus.clear();
 
-        billboards = new ArrayList<Billboard>();
-
-        billboardsAdapter = new BillboardsAdapter(billboards, context);
-
-        rvBillboards.setLayoutManager(manager);
-        rvBillboards.setAdapter(billboardsAdapter);
-
-        netUtils = new NetUtils(view, billboardsAdapter);
-        netUtils.setCommunicator((NetUtils.Communicator) activity);
-        etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
-
-                if (actionId == EditorInfo.IME_ACTION_SEARCH
-//                        || actionId == EditorInfo.IME_ACTION_DONE
-//                        || actionId == EditorInfo.IME_ACTION_GO
-//                        || actionId == EditorInfo.IME_ACTION_NEXT
-//                        || (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN)
-//                        || (keyEvent != null && keyEvent.getAction() == KeyEvent.KEYCODE_ENTER)
-
-                        ) {
-
-                    search();
-                }
-
-                return false;
-            }
-        });
+        if (btnToggleReady.isChecked()) {
+            statusHashMap.put("r", true);
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("image", R.drawable.status_ready_background + "");
+            arrayListStatus.add(hashMap);
+        } else {
+            statusHashMap.put("r", false);
+        }
+        if (btnToggleService.isChecked()) {
+            statusHashMap.put("s", true);
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("image", R.drawable.status_service_background + "");
+            arrayListStatus.add(hashMap);
+        } else {
+            statusHashMap.put("s", false);
+        }
+        if (btnToggleAuction.isChecked()) {
+            statusHashMap.put("a", true);
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("image", R.drawable.status_auction_background + "");
+            arrayListStatus.add(hashMap);
+        } else {
+            statusHashMap.put("a", false);
+        }
+        if (btnToggleUsing.isChecked()) {
+            statusHashMap.put("u", true);
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("image", R.drawable.status_using_background + "");
+            arrayListStatus.add(hashMap);
+        } else {
+            statusHashMap.put("u", false);
+        }
+        statusAdapter.notifyDataSetChanged();
 
 
     }
@@ -340,15 +384,57 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
     }
 
     private void whereMaker() {
+        where = "";
+        whereStatus = "";
         whereAddress = etSearch.getText().toString();
+
         if (!whereAddress.equals(""))
-            where = "address LIKE '%" + whereAddress + "%'";
-        if (!whereProvince.equals(""))
-            where = "`province-id` =" + whereProvince;
-        if (!whereCounty.equals("0"))
-            where = "`county-id` =" + whereCounty;
+            where += "address LIKE '%" + whereAddress + "%'";
+        if (!whereProvince.equals("")) {
+            if (!where.equals(""))
+                where += " and ";
+            where += "`province-id` = " + whereProvince;
+        }
+        if (!whereCounty.equals("0")) {
+            if (!where.equals(""))
+                where += " and ";
+            where += "`county-id` = " + whereCounty;
+        }
+
+        int selected = 0;
+        if (statusHashMap.get("r")) selected++;
+        if (statusHashMap.get("s")) selected++;
+        if (statusHashMap.get("a")) selected++;
+        if (statusHashMap.get("u")) selected++;
 
 
+        if (selected == 4)
+            whereStatus = "";
+        else if (selected == 3) {
+            if (!statusHashMap.get("r"))
+                whereStatus = "`status` <> 'r'";
+            else if (!statusHashMap.get("s"))
+                whereStatus = "`status` <> 's'";
+            else if (!statusHashMap.get("a"))
+                whereStatus = "`status` <> 'a'";
+            else
+                whereStatus = "`status` <> 'u'";
+        } else {
+            for (String status : Utils.getStatusNamesArray()) {
+                if (statusHashMap.get(status)) {
+                    Log.d(TAG, whereStatus);
+                    if (!whereStatus.equals(""))
+                        whereStatus += " or ";
+                    whereStatus += "`status` = '" + status + "'";
+                }
+
+            }
+        }
+        if (!whereStatus.equals(""))
+            whereStatus = " and ( " + whereStatus + " ) ";
+
+        where += whereStatus;
+//        Log.d(TAG, where);
     }
 
 
@@ -399,7 +485,7 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
         switch (id) {
             case R.id.iBDeleteSearch:
                 etSearch.setText(null);
-                whereAddress = "";
+                whereMaker();
                 refresh();
                 break;
             case R.id.button_filterLayout_toggle:
@@ -417,21 +503,6 @@ public class FragmentBillboardsList extends Fragment implements View.OnClickList
                 dialogStatus.show();
                 break;
 
-            case R.id.btn_toggle_auction:
-                Log.d(TAG, "auction " + btnToggleAuction.isChecked());
-                break;
-            case R.id.btn_toggle_ready:
-                Log.d(TAG, "ready " + btnToggleReady.isChecked());
-                break;
-            case R.id.btn_toggle_reserve:
-                Log.d(TAG, "reserve ");
-                break;
-            case R.id.btn_toggle_service:
-                Log.d(TAG, "service ");
-                break;
-            case R.id.expandable_province_counties:
-                Log.d(TAG, "expand ");
-                break;
         }
     }
 

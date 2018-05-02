@@ -69,7 +69,7 @@ public class Utils {
         status_background_using = context.getResources().getDrawable(R.drawable.status_using_background);
         status_background_auction = context.getResources().getDrawable(R.drawable.status_auction_background);
         status_background_ready = context.getResources().getDrawable(R.drawable.status_ready_background);
-        stausNamesArray = new String[]{"آماده", "در سرویس", "در مزایده", "رزرو شده"};
+        stausNamesArray = new String[]{"r", "s", "a", "u"};//ready,service,auction,using
         statusDrawablesArray = new int[]{R.drawable.status_ready_background, R.drawable.status_service_background, R.drawable.status_auction_background, R.drawable.status_using_background};
     }
 
