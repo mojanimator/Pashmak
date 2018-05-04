@@ -30,6 +30,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.app.pashmak.Adapter.MyMarkerInfoWindowAdapter;
+import com.app.pashmak.Model.Billboard;
+import com.app.pashmak.Utils.Utils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -46,9 +49,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.app.pashmak.Adapter.MyMarkerInfoWindowAdapter;
-import com.app.pashmak.Model.Billboard;
-import com.app.pashmak.Utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -381,7 +381,11 @@ public class FragmentBillboardsMap extends Fragment implements OnMapReadyCallbac
 
     public void viewSerachedMarkers(ArrayList<Billboard> billboards) {
 //  set id of billboard in title for access billboard from infoWindowAdapter
-        if (!mapIsReady || billboards.size() == 0) {
+        if (!mapIsReady) {
+            return;
+        }
+        if (billboards.size() == 0) {
+            mMap.clear();
             return;
         }
         mMap.clear();

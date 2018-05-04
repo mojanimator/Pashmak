@@ -134,6 +134,7 @@ public class NetUtils {
                             FragmentBillboardsList.endOfBillboards = true;
                             Utils.mToast(mCtx, "نتیجه ای یافت نشد", Toast.LENGTH_SHORT);
                             billboardsAdapter.notifyDataSetChanged();
+                            communicator.refreshMapFragment(FragmentBillboardsList.billboards);
                             FragmentBillboardsList.onRefresh = false;
                         }
 
